@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4ead8">
+  <meta name="description" content="Stories and reflections from street evangelism, shared by the Anchor of the Soul team.">
+  <title>The Street Journal — Anchor of the Soul</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-journal">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="home.html" aria-label="Anchor of the Soul home">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3v14m-4-9h8m-4-5a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5 13a7 7 0 0 0 14 0m-14 0-2 2m16-2 2 2"/></svg></span>
+        Anchor of the Soul
+      </a>
+      <div class="header-links">
+        <a class="back-link" href="home.html">← Home</a>
+        <a class="back-link" href="resources.html">Evangelism resources →</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container">
+        <p class="eyebrow">Stories from the street</p>
+        <h1>The Street <em>Journal.</em></h1>
+        <p class="hero-copy">Honest experiences and reflections from sharing the hope of Jesus out on the street. Written by our small team of evangelists, with care for the people behind every conversation.</p>
+      </div>
+    </section>
+
+    <section class="archive" id="posts" aria-labelledby="archive-title">
+      <div class="container">
+        <div class="archive-heading">
+          <h2 id="archive-title">Stories from our team</h2>
+          <p>Search stories by topic, category, or tag.</p>
+        </div>
+        <aside class="journal-guidance">
+          <h3>Have a story to share?</h3>
+          <p>Write about what happened, what you learned, and where you saw God at work. Please leave out names and identifying details unless you have clear permission to share them. This site is currently a static page; to publish, duplicate a post in <code>journal.html</code> and replace its text, date, category, and tags.</p>
+        </aside>
+        <div class="filters" role="search">
+          <div class="field">
+            <label for="post-search">Search posts</label>
+            <input id="post-search" type="search" placeholder="Try “first conversation” or “prayer”" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="category-filter">Category</label>
+            <select id="category-filter">
+              <option value="">All categories</option>
+              <option value="Street conversation">Street conversation</option>
+              <option value="Reflection">Reflection</option>
+              <option value="Encouragement">Encouragement</option>
+            </select>
+          </div>
+          <button class="clear-button" id="clear-filters" type="button">Clear filters</button>
+        </div>
+        <div class="tag-filter">
+          <h3>Filter by tag</h3>
+          <div class="tag-list" id="tag-list" aria-label="Available tags"></div>
+        </div>
+        <p class="results-status" id="results-status" aria-live="polite"></p>
+        <div class="post-list" id="post-list"></div>
+        <div class="empty-state" id="empty-state">
+          <h2>The first story is waiting to be told.</h2>
+          <p>There aren’t any street stories published yet. Be the first to share an experience, reflection, or encouragement from the street.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>The Street Journal · Anchor of the Soul</p>
+      <a href="resources.html">Explore evangelism resources</a>
+    </div>
+  </footer>
+
+  <script>
+    const searchInput = document.querySelector("#post-search");
+    const categoryFilter = document.querySelector("#category-filter");
+    const tagList = document.querySelector("#tag-list");
+    const resultsStatus = document.querySelector("#results-status");
+    const emptyState = document.querySelector("#empty-state");
+    const posts = [...document.querySelectorAll(".post")];
+    let activeTag = "";
+
+    function renderTags() {
+      const tags = [...new Set(posts.flatMap((post) => post.dataset.tags.split("|")))]
+        .sort((a, b) => a.localeCompare(b));
+
+      for (const tag of tags) {
+        const button = document.createElement("button");
+        button.className = "tag-button";
+        button.type = "button";
+        button.textContent = tag;
+        button.dataset.tag = tag;
+        button.setAttribute("aria-pressed", "false");
+        tagList.append(button);
+      }
+
+      for (const post of posts) {
+        const postTags = post.querySelector(".post-tags");
+        for (const tag of post.dataset.tags.split("|")) {
+          const label = document.createElement("span");
+          label.className = "post-tag";
+          label.textContent = tag;
+          postTags.append(label);
+        }
+      }
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      const category = categoryFilter.value;
+      let visibleCount = 0;
+
+      for (const post of posts) {
+        const matchesQuery = !query || post.textContent.toLocaleLowerCase().includes(query);
+        const matchesCategory = !category || post.dataset.category === category;
+        const matchesTag = !activeTag || post.dataset.tags.split("|").includes(activeTag);
+        const isVisible = matchesQuery && matchesCategory && matchesTag;
+        post.hidden = !isVisible;
+        if (isVisible) visibleCount += 1;
+      }
+
+      resultsStatus.textContent = `${visibleCount} ${visibleCount === 1 ? "post" : "posts"} found`;
+      emptyState.classList.toggle("is-visible", visibleCount === 0);
+    }
+
+    renderTags();
+    applyFilters();
+    searchInput.addEventListener("input", applyFilters);
+    categoryFilter.addEventListener("change", applyFilters);
+
+    tagList.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-tag]");
+      if (!button) return;
+      activeTag = activeTag === button.dataset.tag ? "" : button.dataset.tag;
+      for (const tagButton of tagList.querySelectorAll("button")) {
+        tagButton.setAttribute("aria-pressed", String(tagButton.dataset.tag === activeTag));
+      }
+      applyFilters();
+    });
+
+    document.querySelector("#clear-filters").addEventListener("click", () => {
+      searchInput.value = "";
+      categoryFilter.value = "";
+      activeTag = "";
+      for (const button of tagList.querySelectorAll("button")) button.setAttribute("aria-pressed", "false");
+      applyFilters();
+      searchInput.focus();
+    });
+  </script>
+</body>
+</html>

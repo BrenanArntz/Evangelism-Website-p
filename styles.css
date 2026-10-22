@@ -487,7 +487,8 @@ body.page-home {
       margin-top: 2.1rem;
     }
     body.page-home .image-pair figure,
-    body.page-home .single-image {
+    body.page-home .single-image,
+    body.page-home .speeding-example figure {
       min-width: 0;
       margin: 0;
       padding: 1rem;
@@ -495,14 +496,16 @@ body.page-home {
       background: var(--white);
     }
     body.page-home .image-pair img,
-    body.page-home .single-image img {
+    body.page-home .single-image img,
+    body.page-home .speeding-example img {
       display: block;
       width: 100%;
       max-height: 390px;
       object-fit: contain;
     }
     body.page-home .image-pair figcaption,
-    body.page-home .single-image figcaption {
+    body.page-home .single-image figcaption,
+    body.page-home .speeding-example figcaption {
       margin-top: 0.8rem;
       color: var(--muted);
       font-size: 0.82rem;
@@ -539,6 +542,15 @@ body.page-home {
     body.page-home .image-pair-wide img { max-height: 450px; }
     body.page-home .creator-image img { max-height: 560px; }
     body.page-home .single-image { max-width: 720px; margin-top: 1.2rem; }
+    body.page-home .speeding-example {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 0.8fr);
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.2rem;
+    }
+    body.page-home .speeding-example p { margin: 0; }
+    body.page-home .speeding-example figure { margin: 0; }
     body.page-home .choice-image { max-width: 560px; margin: 1.5rem auto 2rem; }
     body.page-home .response-options {
       display: grid;
@@ -580,7 +592,7 @@ body.page-home {
     @media (max-width: 760px) {
       body.page-home .presentation-hero { padding: 5rem 0; }
       body.page-home .presentation-hero::after { right: -15rem; width: 550px; }
-      body.page-home .image-pair, body.page-home .self-test, body.page-home .response-options { grid-template-columns: 1fr; }
+      body.page-home .image-pair, body.page-home .speeding-example, body.page-home .self-test, body.page-home .response-options { grid-template-columns: 1fr; }
       body.page-home .image-pair-wide { grid-column: auto; }
       body.page-home .presentation-section { padding: 4rem 0; }
       body.page-home .judge-layout { grid-template-columns: 1fr; row-gap: 1.5rem; }
